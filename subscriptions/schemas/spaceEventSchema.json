@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "event": { "type": "string", "description": "Event type" },
+    "spaceId": { "type": "string", "description": "Space ID" },
+    "webhookId": { "type": "string", "description": "Webhook identifier" }
+  },
+  "required": ["event", "spaceId", "webhookId"]
+}

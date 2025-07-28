@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "event": { "type": "string", "description": "Event type" },
+    "listId": { "type": "string", "description": "ID of the list" },
+    "webhookId": { "type": "string", "description": "Webhook identifier" },
+    "historyItems": {
+      "type": "array",
+      "description": "List of changes made to the list",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "History item ID" },
+          "type": { "type": "number", "description": "Change type" },
+          "date": { "type": "string", "description": "Change timestamp" },
+          "field": {
+            "type": "string",
+            "description": "Field that was changed"
+          },
+          "parent_id": { "type": "string", "description": "Parent entity ID" },
+          "data": {
+            "type": "object",
+            "description": "Additional data",
+            "additionalProperties": true
+          },
+          "source": {
+            "type": ["string", "null"],
+            "description": "Change source"
+          },
+          "user": {
+            "type": "object",
+            "description": "User who made the change",
+            "properties": {
+              "id": { "type": "number", "description": "User ID" },
+              "username": { "type": "string", "description": "Username" },
+              "email": { "type": "string", "description": "User email" },
+              "color": { "type": "string", "description": "User color" },
+              "initials": { "type": "string", "description": "User initials" },
+              "profilePicture": {
+                "type": ["string", "null"],
+                "description": "Profile picture URL"
+              }
+            },
+            "required": ["id", "username", "email"]
+          },
+          "before": { "type": "string", "description": "Value before change" },
+          "after": { "type": "string", "description": "Value after change" }
+        },
+        "required": ["id", "type", "date", "field", "user"]
+      }
+    }
+  },
+  "required": ["event", "historyItems", "listId", "webhookId"]
+}

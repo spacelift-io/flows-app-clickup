@@ -1,325 +1,223 @@
-# Flows App Template
+# ClickUp Integration for Flows
 
-A template repository for creating new Flows apps with best practices and CI/CD built-in.
+A comprehensive ClickUp integration that brings the full power of ClickUp's project management capabilities to your Flows workflows. Manage tasks, projects, teams, and more with easy-to-use blocks.
+
+## Features
+
+### Task Management
+
+- Create, update, and delete tasks with rich configuration options
+- Advanced task features: priorities, due dates, time tracking, custom fields
+- Subtask support with parent-child relationships
+- Task filtering with powerful search and sort capabilities
+
+### Project Organization
+
+- Spaces: Top-level organizational units for your teams
+- Folders: Group related lists and maintain project structure
+- Lists: Task containers with customizable workflows
+- Views: Custom perspectives on your data with filtering and grouping
+
+### Team Collaboration
+
+- User management: Invite, edit, and manage team members
+- Guest access: Controlled access for external collaborators
+- Comments: Rich threaded discussions on tasks and projects
+- @mentions and notifications to keep everyone in the loop
+
+### Time & Goal Tracking
+
+- Time entries: Track work with start/stop timers and manual entries
+- Goals & Key Results: OKR support for strategic planning
+- Progress tracking with visual indicators and reporting
+
+### Advanced Features
+
+- Custom fields: Extend tasks with your own data structures
+- Tags: Flexible labeling and categorization system
+- Templates: Accelerate project setup with reusable structures
+- Webhooks: Real-time event processing and automation
+
+### Real-time Synchronization
+
+- Live updates through ClickUp webhooks
+- Event subscriptions for tasks, lists, spaces, goals, and more
+- Automatic sync keeps your Flows workflows current
 
 ## Quick Start
 
-1. **Use this template** - Click "Use this template" button to create a new repository
-2. **Run setup** - `npm run setup` to customize placeholders automatically
-3. **Implement your logic** - Add blocks and customize configuration
-4. **Set up CI/CD** - Configure branch protection and deployment
-5. **Release** - Tag and release your app
+### 1. Create ClickUp OAuth App
 
-## Template Structure
+1. Go to [ClickUp App Settings](https://app.clickup.com/settings/apps)
+2. Click "Create an App"
+3. Fill in your app details:
+   - App Name: Your Flows ClickUp Integration
+   - Description: Integration for Flows workflows
+   - Redirect URL: `[YOUR_APP_URL]/auth/callback`
 
-```
-├── .github/workflows/ci.yml    # CI/CD pipeline
-├── .gitignore                  # Git ignore rules
-├── package.json                # Dependencies and scripts
-├── tsconfig.json              # TypeScript configuration
-├── main.ts                    # App definition
-├── types.ts                   # Type definitions
-├── blocks/                    # Block implementations
-│   ├── index.ts              # Block registry and exports
-│   └── exampleBlock.ts       # Example block implementation
-├── setup.sh                  # Automated setup script
-└── README.md                 # This file
-```
+### 2. Configure the Integration
 
-## Customization Guide
+1. Install this ClickUp app in your Flows workspace
+2. Enter your Client ID and Client Secret from step 1
+3. Click Sync to initialize the connection
 
-### 1. Replace Placeholders
+### 3. Authorize Access
 
-Find and replace these placeholders throughout the codebase:
+1. Click the authorization link that appears
+2. Grant permissions to your ClickUp workspace
+3. You'll be redirected back - the app status should show Ready
 
-- `{{APP_NAME}}` - Your app name (e.g., "Slack Integration")
-- `{{APP_DESCRIPTION}}` - Brief description of your app
+### 4. Start Building
 
-**Files to update:**
+Drag ClickUp blocks into your flows and start automating your project management!
 
-- `package.json` - name and description fields
-- `main.ts` - app name and description
-- `types.ts` - JSDoc comments
-- `README.md` - update this file
+## Available Blocks
 
-### 2. Customize Configuration
+### Task Management (5 blocks)
 
-In `main.ts`, modify the `config` object:
+- Create Task: Create new tasks with full configuration
+- Update Task: Modify existing tasks and their properties
+- Get Task: Retrieve detailed task information
+- List Tasks: Search and filter tasks with advanced queries
+- Delete Task: Remove tasks from your workspace
 
-```typescript
-config: {
-  type: "object",
-  properties: {
-    apiKey: {
-      type: "string",
-      title: "API Key",
-      description: "Your service API key",
-      secret: true  // This makes it a password field
-    },
-    baseUrl: {
-      type: "string",
-      title: "Base URL",
-      description: "API base URL",
-      default: "https://api.example.com"
-    }
-  },
-  required: ["apiKey"]  // Required fields
-}
-```
+### Project Structure (15 blocks)
 
-### 3. Implement Your Blocks
+- Spaces: Create, update, delete, list, and get space details
+- Folders: Full CRUD operations for project folders
+- Lists: Manage task lists with custom configurations
+- Views: Create custom views with filtering and grouping
+- Templates: Use templates to accelerate project setup
 
-The template includes a clean block structure. Blocks are organized in the `blocks/` directory:
+### Team Management (10 blocks)
 
-#### Adding a New Block
+- User Operations: Get, edit, invite, and remove users
+- Guest Management: Add and manage external collaborators
+- Workspace Info: Get authorized user and workspace details
+- Member Lists: Get task and list members
 
-1. **Create the block file** (e.g., `blocks/myNewBlock.ts`):
+### Communication (6 blocks)
 
-```typescript
-import { AppBlock, EventInput } from "@slflows/sdk";
+- Comments: Create, update, delete, and list comments
+- Threaded Replies: Support for comment conversations
+- Rich Text: Full formatting support in comments
 
-export const myNewBlock: AppBlock = {
-  name: "Your Action Name",
-  description: "What your block does",
-  category: "Your Category",
+### Time & Goals (11 blocks)
 
-  inputs: {
-    default: {
-      name: "Input Name",
-      description: "What users need to provide",
-      config: {
-        // Define your input schema here
-        type: "object",
-        properties: {
-          message: {
-            type: "string",
-            title: "Message",
-            description: "Input description",
-          },
-        },
-        required: ["message"],
-      },
-      onEvent: async (input: EventInput, { events }) => {
-        // Your logic here
-        const message = input.params.message as string;
-        const apiKey = input.app.config.apiKey as string;
+- Time Tracking: Create, update, delete time entries
+- Timer Controls: Start and stop active timers
+- Goals: Create and manage strategic objectives
+- Key Results: Track progress on goal outcomes
 
-        // Call your external API, process data, etc.
+### Advanced Features (15+ blocks)
 
-        // Just emit the result directly - don't wrap in success object
-        await events.emit({
-          result: "your result",
-        });
-      },
-    },
-  },
+- Custom Fields: Get and set custom field values
+- Tags: Create, update, delete, and manage tags
+- Checklists: Task checklists with item management
+- Webhooks: Manage real-time event subscriptions
+- Event Subscriptions: Listen for ClickUp events in your flows
 
-  outputs: {
-    default: {
-      name: "Output Name",
-      description: "What your block returns",
-      default: true,
-      type: {
-        // Define your output schema here
-        type: "object",
-        properties: {
-          result: { type: "string" },
-        },
-        required: ["result"],
-      } as any,
-    },
-  },
-};
-```
+## Technical Details
 
-2. **Register the block** in `blocks/index.ts`:
+### Architecture
 
-```typescript
-import { myNewBlock } from "./myNewBlock.ts";
-
-export const blocks = {
-  example: exampleBlock,
-  myNew: myNewBlock, // Add your block here
-} as const;
-
-export { myNewBlock }; // Export for external use
-```
-
-That's it! The block will automatically be included in your app via `Object.values(blocks)` in `main.ts`.
-
-## Development
-
-### Prerequisites
-
-- Node.js 20+
-- npm
-
-### Setup
-
-```bash
-npm install
-npm run setup        # Interactive setup to customize template
-```
-
-### Available Scripts
-
-```bash
-npm run setup        # Customize template placeholders
-npm run typecheck    # Type checking
-npm run format       # Code formatting
-npm run bundle       # Create deployment bundle
-```
-
-### Testing Your App
-
-1. Run type checking: `npm run typecheck`
-2. Format code: `npm run format`
-3. Create bundle: `npm run bundle`
-
-**Note**: Initial `npm run typecheck` will show SDK import errors until you customize the template. This is expected - the SDK will be available when the app runs in the Flows environment.
-
-## CI/CD Pipeline
-
-The template includes a complete CI/CD pipeline in `.github/workflows/ci.yml`:
-
-### Continuous Integration
-
-- **Triggers**: All branch pushes (except main)
-- **Steps**: Type check, format validation, bundling
-- **Quality Gates**: Must pass all checks to merge
-
-### Automated Releases
-
-- **Triggers**: Semver tags (v1.0.0, v2.1.3, etc.)
-- **Process**:
-  1. Runs full CI validation
-  2. Creates GitHub release with bundle
-  3. Updates version registry (`versions.json`)
-  4. Pushes registry to main branch
-
-### Version Registry
-
-The pipeline automatically maintains a `versions.json` file:
-
-```json
-{
-  "versions": [
-    {
-      "version": "1.0.0",
-      "artifactUrl": "https://github.com/user/repo/releases/download/v1.0.0/bundle.tar.gz",
-      "artifactChecksum": "sha256:abc123..."
-    }
-  ]
-}
-```
-
-## Repository Setup
-
-### 1. Branch Protection (Recommended)
-
-Configure branch protection for `main`:
-
-- Require pull request reviews
-- Require status checks (CI)
-- Allow GitHub Actions bot to bypass (for version registry updates)
-
-### 2. Repository Settings
-
-- Enable "Template repository" if this will be reused
-- Configure secrets if needed for external services
-- Set up branch protection rules
-
-## Deployment
-
-### Creating Releases
-
-1. **Ensure main is clean**: All changes merged and CI passing
-2. **Create and push tag**:
-   ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
-   ```
-3. **Automated process**: CI creates release and updates registry
-4. **Verify**: Check GitHub releases and `versions.json` in main
-
-### Versioning
-
-Follow [Semantic Versioning](https://semver.org/):
-
-- `v1.0.0` - Major release (breaking changes)
-- `v1.1.0` - Minor release (new features)
-- `v1.0.1` - Patch release (bug fixes)
-
-## Best Practices
-
-### Code Organization
-
-- Keep `main.ts` focused on app definition
-- Use `types.ts` for all TypeScript definitions
-- Document your blocks and configuration clearly
-
-### Error Handling
-
-- Let errors bubble up naturally - don't catch and wrap them
-- Use descriptive error messages
-- The framework will handle error catching and reporting
+- TypeScript-first with full type safety
+- Auto-generated schemas from ClickUp's OpenAPI specification
+- Intelligent type handling - simple types for basic fields, complex schemas for advanced features
+- Comprehensive error handling with user-friendly messages
 
 ### Security
 
-- Mark sensitive config fields as `secret: true`
-- Never log API keys or sensitive data
-- Validate all inputs
+- OAuth 2.0 authentication flow
+- Webhook signature verification for secure event processing
+- Sensitive data protection with encrypted storage
+- Scoped permissions following principle of least privilege
 
-### Testing
+### Performance
 
-- Test your blocks manually before releasing
-- Verify configuration schema works as expected
-- Test the complete deployment pipeline
+- Efficient API usage with smart request batching
+- Real-time updates through webhook subscriptions
+- Optimized schemas reduce payload sizes
+- Caching strategies for improved response times
 
-## Troubleshooting
+## Contributing
 
-### Common Issues
-
-**CI fails on format check**
+### Development Setup
 
 ```bash
-npm run format
-git add .
-git commit -m "Fix formatting"
+# Install dependencies
+npm install
+
+# Generate schemas from OpenAPI spec
+npm run generate-schema
+
+# Validate generated schemas
+npm run validate-schema
+
+# Type check everything
+npx tsc --noEmit
 ```
 
-**Bundle creation fails**
+### Schema Generation
 
-- Check TypeScript errors: `npm run typecheck`
-- Verify all imports are correct
-- Ensure `main.ts` exports default app
+The app uses an intelligent schema generation system:
 
-**Release creation fails**
+```bash
+# Regenerate all input/output schemas
+npm run generate-schema
+```
 
-- Verify branch protection allows GitHub Actions bot
-- Check repository permissions
-- Ensure tag follows semver format (v1.0.0)
+This automatically:
 
-**Version registry not updating**
+- Extracts schemas from ClickUp's OpenAPI specification
+- Converts to TypeScript-compatible formats
+- Adds meaningful descriptions for all fields
+- Filters out team_id for security
+- Organizes fields (required first, then optional)
+- Uses simple types where possible, complex types when needed
 
-- Check GitHub Actions bot has push access to main
-- Verify workflow permissions in repository settings
-- Check for conflicts in versions.json
+### File Structure
 
-## Template Checklist
+```text
+clickup/
+├── actions/           # All ClickUp action blocks
+│   ├── tasks/         # Task management blocks
+│   ├── lists/         # List management blocks
+│   ├── spaces/        # Space management blocks
+│   ├── teamManagement/ # User & team blocks
+│   ├── timeTracking/   # Time tracking blocks
+│   ├── goals/         # Goals & objectives blocks
+│   └── ... (and more)
+├── subscriptions/     # Webhook event handlers
+├── utils/            # Shared utilities
+├── scripts/          # Development tools
+└── security.ts       # Webhook verification
+```
 
-When creating a new app from this template:
+## Documentation
 
-- [ ] Run `npm install && npm run setup` for automated setup
-- [ ] Customize app configuration schema in `main.ts`
-- [ ] Implement your block logic in `blocks/`
-- [ ] Update block names, descriptions, and categories
-- [ ] Define proper input/output schemas
-- [ ] Test locally with `npm run typecheck` and `npm run bundle`
-- [ ] Update this README with app-specific information
-- [ ] Set up repository branch protection
-- [ ] Create first release with `git tag v1.0.0`
+### Core Concepts
 
----
+- Workspaces: Top-level ClickUp organizations (teams)
+- Hierarchical Structure: Space → Folder → List → Task
+- Custom Fields: Extend any object with custom data
+- Webhooks: Real-time event notifications
 
-**Template Version**: 1.0.0
+### Best Practices
+
+- Use webhooks for real-time synchronization
+- Leverage custom fields for workflow-specific data
+- Use tags for flexible categorization
+- Implement time tracking for accurate project insights
+- Set up Goals and Key Results for strategic alignment
+
+### Troubleshooting
+
+- Authorization Issues: Ensure redirect URL matches exactly
+- Webhook Problems: Check webhook secret configuration
+- Permission Errors: Verify OAuth scopes include required permissions
+- Rate Limits: ClickUp enforces API rate limits - implement backoff strategies
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

@@ -1,0 +1,119 @@
+{
+  "type": "object",
+  "properties": {
+    "event": {
+      "type": "string",
+      "description": "Event type"
+    },
+    "taskId": {
+      "type": "string",
+      "description": "Task ID"
+    },
+    "webhookId": {
+      "type": "string",
+      "description": "Webhook identifier"
+    },
+    "historyItems": {
+      "type": "array",
+      "description": "History items describing the changes",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "History item ID"
+          },
+          "type": {
+            "type": "number",
+            "description": "History item type"
+          },
+          "date": {
+            "type": "string",
+            "description": "Timestamp of the change"
+          },
+          "field": {
+            "type": "string",
+            "description": "Field that was changed"
+          },
+          "parentId": {
+            "type": "string",
+            "description": "Parent ID"
+          },
+          "data": {
+            "type": "object",
+            "description": "Additional data for the change",
+            "additionalProperties": true
+          },
+          "source": {
+            "description": "Source of the change",
+            "anyOf": [{ "type": "string" }, { "type": "null" }]
+          },
+          "user": {
+            "type": "object",
+            "description": "User who made the change",
+            "properties": {
+              "id": { "type": "number" },
+              "username": { "type": "string" },
+              "email": { "type": "string" },
+              "color": { "type": "string" },
+              "initials": { "type": "string" },
+              "profilePicture": {
+                "anyOf": [{ "type": "string" }, { "type": "null" }]
+              }
+            }
+          },
+          "before": {
+            "description": "State before the change - arbitrary data",
+            "anyOf": [
+              { "type": "object", "additionalProperties": true },
+              { "type": "string" },
+              { "type": "null" }
+            ]
+          },
+          "after": {
+            "description": "State after the change - arbitrary data",
+            "anyOf": [
+              { "type": "object", "additionalProperties": true },
+              { "type": "string" },
+              { "type": "null" }
+            ]
+          },
+          "custom_field": {
+            "type": "object",
+            "description": "Custom field definition when field is 'custom_field'",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "type_config": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "values_set": {
+                "anyOf": [
+                  { "type": "object", "additionalProperties": true },
+                  { "type": "null" }
+                ]
+              },
+              "userid": { "type": "string" },
+              "date_created": { "type": "string" },
+              "hide_from_guests": { "type": "boolean" },
+              "team_id": { "type": "string" },
+              "deleted": { "type": "boolean" },
+              "deleted_by": {
+                "anyOf": [{ "type": "string" }, { "type": "null" }]
+              },
+              "pinned": { "type": "boolean" },
+              "required": { "type": "boolean" },
+              "required_on_subtasks": { "type": "boolean" },
+              "linked_subcategory": {
+                "anyOf": [{ "type": "string" }, { "type": "null" }]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["event", "taskId", "webhookId", "historyItems"]
+}

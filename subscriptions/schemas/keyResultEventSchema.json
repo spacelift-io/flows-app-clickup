@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "event": {
+      "type": "string",
+      "description": "Event type"
+    },
+    "goalId": {
+      "type": "string",
+      "description": "Goal ID"
+    },
+    "keyResultId": {
+      "type": "string",
+      "description": "Key Result ID"
+    },
+    "webhookId": {
+      "type": "string",
+      "description": "Webhook identifier"
+    }
+  },
+  "required": ["event", "goalId", "keyResultId", "webhookId"]
+}
