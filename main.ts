@@ -19,6 +19,8 @@ import {
 import { subscriptions } from "./subscriptions/index.ts";
 import { actions } from "./actions/index.ts";
 
+const authorizationPromptKey = "authorization";
+
 export const app = defineApp({
   name: "ClickUp",
   installationInstructions: `
@@ -153,7 +155,7 @@ enum InstallState {
 
 // Helper function to determine current installation state
 async function determineInstallationState(
-  input: any,
+  input: AppInput,
 ): Promise<{ state: InstallState; data: any }> {
   const { config, signals } = input.app;
   const { clientSecret } = config;
@@ -166,8 +168,7 @@ async function determineInstallationState(
   // --- KV-First Checks for In-Progress Operations ---
 
   // 2. Awaiting User Auth (Prompt exists, but no token yet)
-  const authPromptId = (await kv.app.get("auth_prompt_id"))?.value;
-  if (authPromptId) {
+  if (authorizationPromptKey in input.app.prompts) {
     return { state: InstallState.AWAITING_USER_AUTH, data: {} };
   }
 
@@ -196,18 +197,12 @@ async function handleConfigChange(
   console.log("Config changed, resetting auth");
 
   // 1. Clean up existing auth prompt if any
-  const existingPromptId = (await kv.app.get("auth_prompt_id"))?.value;
-  if (existingPromptId) {
-    await lifecycle.prompt.delete(existingPromptId);
+  if (authorizationPromptKey in input.app.prompts) {
+    await lifecycle.prompt.delete(authorizationPromptKey);
   }
 
   // 2. Clean up all transient KV state to force fresh start
-  await kv.app.delete([
-    "auth_prompt_id",
-    "access_token",
-    "oauth_complete",
-    "oauth_state",
-  ]);
+  await kv.app.delete(["access_token", "oauth_complete", "oauth_state"]);
 
   // 3. Trigger fresh auth creation
   return handleAuthCreation(input);
@@ -218,11 +213,11 @@ async function handleAuthCreation(
   input: any,
 ): Promise<AppLifecycleCallbackOutput> {
   const url = `${input.app.http.url}/auth/start`;
-  const promptId = await lifecycle.prompt.create(
+  await lifecycle.prompt.create(
+    authorizationPromptKey,
     "Click to authorize with ClickUp",
     { redirect: { url, method: "GET" } },
   );
-  await kv.app.set({ key: "auth_prompt_id", value: promptId });
 
   return {
     newStatus: "in_progress",
@@ -362,10 +357,8 @@ async function handleOAuthCallback({ request, app }: any) {
     ]);
 
     // Delete the auth prompt immediately after successful OAuth
-    const authPromptId = (await kv.app.get("auth_prompt_id"))?.value;
-    if (authPromptId) {
-      await lifecycle.prompt.delete(authPromptId);
-      await kv.app.delete(["auth_prompt_id"]);
+    if (authorizationPromptKey in app.prompts) {
+      await lifecycle.prompt.delete(authorizationPromptKey);
     }
 
     // Always redirect to app installation URL
