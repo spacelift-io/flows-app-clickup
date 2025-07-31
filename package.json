@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^14.0.2",
-    "@slflows/sdk": "^0.0.7",
+    "@slflows/sdk": "^0.2.0",
     "@types/node": "^24.0.7",
     "typescript": "^5.0.0"
   },
