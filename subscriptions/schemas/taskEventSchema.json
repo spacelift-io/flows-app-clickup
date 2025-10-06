@@ -110,6 +110,23 @@
                 "anyOf": [{ "type": "string" }, { "type": "null" }]
               }
             }
+          },
+          "comment": {
+            "type": "object",
+            "description": "Comment information",
+            "properties": {
+              "date": { "type": "string" },
+              "id": { "type": "string" },
+              "text_content": { "type": "string" },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "id": { "type": "number" },
+                  "username": { "type": "string" }
+                }
+              }
+            }
           }
         }
       }
