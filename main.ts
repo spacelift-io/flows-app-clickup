@@ -101,7 +101,10 @@ To connect your ClickUp account:
         return {};
 
       case InstallState.NEEDS_WEBHOOK_SETUP:
-        return handleWebhookSetup(input, data.accessToken);
+        return handleWebhookSetup(input, data.accessToken, {
+          reactivateWebhook: data.reactivateWebhook,
+          existingWebhook: data.existingWebhook,
+        });
 
       default:
         return {
@@ -153,6 +156,46 @@ enum InstallState {
   NEEDS_WEBHOOK_SETUP = "needs_webhook_setup",
 }
 
+// Helper function to verify webhook exists and is active
+async function verifyWebhookStatus(
+  accessToken: string,
+  webhookId: string,
+  teamId: string,
+): Promise<{
+  exists: boolean;
+  status?: string;
+  webhook?: any;
+}> {
+  try {
+    // List all webhooks for the team
+    const response = await makeClickUpApiRequest(
+      accessToken,
+      `/v2/team/${teamId}/webhook`,
+      { method: "GET" },
+    );
+
+    const webhooks = response.webhooks || [];
+    const webhook = webhooks.find((w: any) => w.id === webhookId);
+
+    if (!webhook) {
+      return { exists: false };
+    }
+
+    // Check webhook health status
+    const healthStatus = webhook.health?.status || "active";
+
+    return {
+      exists: true,
+      status: healthStatus,
+      webhook: webhook,
+    };
+  } catch (error) {
+    console.error("Error verifying webhook status:", error);
+    // If we can't verify, treat as non-existent
+    return { exists: false };
+  }
+}
+
 // Helper function to determine current installation state
 async function determineInstallationState(
   input: AppInput,
@@ -176,7 +219,44 @@ async function determineInstallationState(
 
   // 3. Ready State (Happy Path) - both access token and webhook in signals
   if (signals?.accessToken && signals?.webhookId) {
-    return { state: InstallState.READY, data: {} };
+    // Verify webhook still exists and is active
+    try {
+      const webhookStatus = await verifyWebhookStatus(
+        signals.accessToken,
+        signals.webhookId,
+        signals.teamId,
+      );
+
+      if (!webhookStatus.exists) {
+        // Webhook doesn't exist, need to recreate it
+        return {
+          state: InstallState.NEEDS_WEBHOOK_SETUP,
+          data: { accessToken: signals.accessToken },
+        };
+      }
+
+      if (webhookStatus.status === "suspended") {
+        // Webhook is suspended, need to reactivate it
+        return {
+          state: InstallState.NEEDS_WEBHOOK_SETUP,
+          data: {
+            accessToken: signals.accessToken,
+            reactivateWebhook: true,
+            existingWebhook: webhookStatus.webhook,
+          },
+        };
+      }
+
+      // Webhook exists and is active
+      return { state: InstallState.READY, data: {} };
+    } catch (error) {
+      // If verification fails, treat as needing webhook setup
+      console.error("Failed to verify webhook status:", error);
+      return {
+        state: InstallState.NEEDS_WEBHOOK_SETUP,
+        data: { accessToken: signals.accessToken },
+      };
+    }
   }
 
   // 4. Needs Webhook Setup - has access token but missing webhookId
@@ -230,6 +310,7 @@ async function handleAuthCreation(
 async function handleWebhookSetup(
   input: any,
   accessToken: string,
+  options?: { reactivateWebhook?: boolean; existingWebhook?: any },
 ): Promise<AppLifecycleCallbackOutput> {
   try {
     const { teams } = await makeClickUpApiRequest(accessToken, "/v2/team");
@@ -243,46 +324,77 @@ async function handleWebhookSetup(
 
     const teamId = teams[0].id;
 
-    const { webhook } = await makeClickUpApiRequest(
-      accessToken,
-      `/v2/team/${teamId}/webhook`,
-      {
-        method: "POST",
-        body: {
-          endpoint: `${input.app.http.url}/`,
-          events: [
-            "taskCreated",
-            "taskUpdated",
-            "taskDeleted",
-            "taskCommentPosted",
-            "taskCommentUpdated",
-            "taskTimeTrackedUpdated",
-            "listCreated",
-            "listUpdated",
-            "listDeleted",
-            "folderCreated",
-            "folderUpdated",
-            "folderDeleted",
-            "spaceCreated",
-            "spaceUpdated",
-            "spaceDeleted",
-            "goalCreated",
-            "goalUpdated",
-            "goalDeleted",
-            "taskPriorityUpdated",
-            "taskStatusUpdated",
-            "taskAssigneeUpdated",
-            "taskDueDateUpdated",
-            "taskTagUpdated",
-            "taskMoved",
-            "taskTimeEstimateUpdated",
-            "keyResultCreated",
-            "keyResultUpdated",
-            "keyResultDeleted",
-          ],
+    let webhook;
+
+    // Check if we're reactivating an existing suspended webhook
+    if (options?.reactivateWebhook && options?.existingWebhook) {
+      console.log(
+        "Reactivating suspended webhook:",
+        options.existingWebhook.id,
+      );
+
+      // Update the webhook to reactivate it (set status to active)
+      const updateResponse = await makeClickUpApiRequest(
+        accessToken,
+        `/v2/webhook/${options.existingWebhook.id}`,
+        {
+          method: "PUT",
+          body: {
+            endpoint: options.existingWebhook.endpoint,
+            events: options.existingWebhook.events,
+            status: "active",
+          },
         },
-      },
-    );
+      );
+
+      webhook = updateResponse.webhook;
+    } else {
+      // Create a new webhook
+      console.log("Creating new webhook for team:", teamId);
+
+      const { webhook: newWebhook } = await makeClickUpApiRequest(
+        accessToken,
+        `/v2/team/${teamId}/webhook`,
+        {
+          method: "POST",
+          body: {
+            endpoint: `${input.app.http.url}/`,
+            events: [
+              "taskCreated",
+              "taskUpdated",
+              "taskDeleted",
+              "taskCommentPosted",
+              "taskCommentUpdated",
+              "taskTimeTrackedUpdated",
+              "listCreated",
+              "listUpdated",
+              "listDeleted",
+              "folderCreated",
+              "folderUpdated",
+              "folderDeleted",
+              "spaceCreated",
+              "spaceUpdated",
+              "spaceDeleted",
+              "goalCreated",
+              "goalUpdated",
+              "goalDeleted",
+              "taskPriorityUpdated",
+              "taskStatusUpdated",
+              "taskAssigneeUpdated",
+              "taskDueDateUpdated",
+              "taskTagUpdated",
+              "taskMoved",
+              "taskTimeEstimateUpdated",
+              "keyResultCreated",
+              "keyResultUpdated",
+              "keyResultDeleted",
+            ],
+          },
+        },
+      );
+
+      webhook = newWebhook;
+    }
 
     // Clean up all transient KV values now that setup is complete
     await kv.app.delete(["oauth_complete"]);
@@ -302,7 +414,7 @@ async function handleWebhookSetup(
     return {
       newStatus: "failed",
       customStatusDescription:
-        "Failed to create webhook. Please try syncing again.",
+        "Failed to create/activate webhook. Please try syncing again.",
     };
   }
 }
