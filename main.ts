@@ -7,6 +7,7 @@ import {
   lifecycle,
   AppInput,
   AppLifecycleCallbackOutput,
+  AppOnTriggerInput,
 } from "@slflows/sdk/v1";
 import { verifyClickUpWebhook } from "./security.ts";
 import { getAccessToken, makeClickUpApiRequest } from "./utils/apiHelpers.ts";
@@ -130,6 +131,19 @@ To connect your ClickUp account:
     }
 
     return { newStatus: "drained" };
+  },
+
+  schedules: {
+    webhookHealthCheck: {
+      description: "Periodic webhook health check",
+      definition: {
+        type: "frequency",
+        frequency: { interval: 10, unit: "minutes" },
+      },
+      onTrigger: async (input: AppOnTriggerInput) => {
+        await handleWebhookHealthCheck(input);
+      },
+    },
   },
 
   http: {
@@ -416,6 +430,52 @@ async function handleWebhookSetup(
       customStatusDescription:
         "Failed to create/activate webhook. Please try syncing again.",
     };
+  }
+}
+
+// Periodic webhook health check handler
+async function handleWebhookHealthCheck(input: AppOnTriggerInput) {
+  const { signals } = input.app;
+
+  // Only check if we're in a fully configured state
+  if (!signals?.accessToken || !signals?.webhookId || !signals?.teamId) {
+    return;
+  }
+
+  try {
+    const webhookStatus = await verifyWebhookStatus(
+      signals.accessToken,
+      signals.webhookId,
+      signals.teamId,
+    );
+
+    if (!webhookStatus.exists) {
+      console.error(
+        `[Webhook Health Check] Webhook ${signals.webhookId} no longer exists on ClickUp. ` +
+          `Team: ${signals.teamId}. Triggering repair via sync.`,
+      );
+      await lifecycle.sync();
+      return;
+    }
+
+    if (webhookStatus.status !== "active") {
+      const health = webhookStatus.webhook?.health;
+      console.error(
+        `[Webhook Health Check] Webhook ${signals.webhookId} is ${webhookStatus.status}. ` +
+          `Team: ${signals.teamId}. ` +
+          `Fail count: ${health?.fail_count ?? "unknown"}. ` +
+          `Triggering repair via sync.`,
+      );
+      await lifecycle.sync();
+      return;
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(
+      `[Webhook Health Check] Failed to verify webhook status. ` +
+        `Webhook: ${signals.webhookId}, Team: ${signals.teamId}. ` +
+        `Error: ${errorMessage}`,
+    );
   }
 }
 
