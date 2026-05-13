@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -15,7 +15,9 @@ const inputSchema = {
   assignee: {
     name: "Assignee",
     description: "The user ID to assign",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
   comment_id: {
@@ -42,12 +44,20 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+  custom_task_ids: {
+    name: "Custom Task IDs",
+    description:
+      "If you want to reference a task by its custom task id, this value must be `true`.",
+    type: "boolean",
+    required: false,
+  },
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Comment
 const outputSchema = {
   type: "object",
   contentMediaType: "application/json",
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -57,7 +67,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { comment_id, custom_task_ids, ...inputData } =
           input.event.inputConfig;

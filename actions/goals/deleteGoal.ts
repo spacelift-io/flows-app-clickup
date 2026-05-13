@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -15,12 +15,13 @@ const inputSchema = {
     type: "string",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Delete Goal
 const outputSchema = {
   type: "object",
   contentMediaType: "application/json",
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -30,7 +31,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { goal_id } = input.event.inputConfig;
         const endpoint = `/v2/goal/${goal_id}`;

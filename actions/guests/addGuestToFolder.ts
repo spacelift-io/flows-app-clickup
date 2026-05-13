@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -38,7 +38,7 @@ const inputSchema = {
     type: "boolean",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Add Guest To Folder
 const outputSchema = {
@@ -137,6 +137,7 @@ const outputSchema = {
               type: "string",
             },
           },
+          additionalProperties: true,
         },
         invited_by: {
           type: "object",
@@ -160,6 +161,7 @@ const outputSchema = {
               type: "string",
             },
           },
+          additionalProperties: true,
         },
         can_see_time_spent: {
           type: "boolean",
@@ -243,6 +245,7 @@ const outputSchema = {
                           type: "string",
                         },
                       },
+                      additionalProperties: true,
                     },
                   },
                   lists: {
@@ -255,13 +258,17 @@ const outputSchema = {
                     type: "string",
                   },
                 },
+                additionalProperties: true,
               },
             },
           },
+          additionalProperties: true,
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -271,7 +278,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { folder_id, guest_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/folder/${folder_id}/guest/${guest_id}`;

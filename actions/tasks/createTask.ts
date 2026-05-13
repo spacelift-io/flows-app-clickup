@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -33,7 +33,12 @@ const inputSchema = {
   assignees: {
     name: "Assignees",
     description: "Array of user IDs to assign",
-    type: ["number"],
+    type: {
+      type: "array",
+      items: {
+        type: "integer",
+      },
+    },
     required: false,
   },
   check_required_custom_fields: {
@@ -66,6 +71,7 @@ const inputSchema = {
             ],
           },
         },
+        additionalProperties: true,
       },
     },
     required: false,
@@ -93,7 +99,9 @@ const inputSchema = {
   due_date: {
     name: "Due Date",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   due_date_time: {
@@ -105,14 +113,31 @@ const inputSchema = {
   group_assignees: {
     name: "Group Assignees",
     description: "Assign multiple user groups to the task.",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description: "Assign multiple user groups to the task.",
+    },
     required: false,
   },
   links_to: {
     name: "Links To",
     description:
       "Include a task ID to create a linked dependency with your new task.",
-    type: "string",
+    type: {
+      description:
+        "Include a task ID to create a linked dependency with your new task.",
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
     required: false,
   },
   markdown_content: {
@@ -132,7 +157,18 @@ const inputSchema = {
   parent: {
     name: "Parent",
     description: "Parent task ID for creating subtasks",
-    type: "string",
+    type: {
+      description:
+        "You can create a subtask by including an existing task ID.\\\n \\\nThe `parent` task ID you include can be a subtask, but must be in the same List specified in the path parameter.",
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
     required: false,
   },
   points: {
@@ -144,13 +180,24 @@ const inputSchema = {
   priority: {
     name: "Priority",
     description: "The priority level",
-    type: "number",
+    type: {
+      anyOf: [
+        {
+          type: "integer",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
     required: false,
   },
   start_date: {
     name: "Start Date",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   start_date_time: {
@@ -168,16 +215,23 @@ const inputSchema = {
   tags: {
     name: "Tags",
     description: "Array of tag names to apply",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
     required: false,
   },
   time_estimate: {
     name: "Time Estimate",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Task
 const outputSchema = {
@@ -234,6 +288,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     orderindex: {
       type: "string",
@@ -271,6 +326,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     assignees: {
       type: "array",
@@ -330,6 +386,7 @@ const outputSchema = {
       anyOf: [
         {
           type: "object",
+          additionalProperties: true,
         },
         {
           type: "null",
@@ -357,11 +414,7 @@ const outputSchema = {
       ],
     },
     points: {
-      anyOf: [
-        {
-          type: "number",
-        },
-      ],
+      type: "number",
     },
     time_estimate: {
       anyOf: [
@@ -413,6 +466,7 @@ const outputSchema = {
                 type: "boolean",
               },
             },
+            additionalProperties: true,
           },
           date_created: {
             type: "string",
@@ -459,6 +513,7 @@ const outputSchema = {
                     ],
                   },
                 },
+                additionalProperties: true,
               },
               {
                 type: "string",
@@ -476,6 +531,7 @@ const outputSchema = {
             type: "boolean",
           },
         },
+        additionalProperties: true,
       },
     },
     list: {
@@ -486,6 +542,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     folder: {
       required: ["id"],
@@ -495,6 +552,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     space: {
       required: ["id"],
@@ -504,11 +562,13 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     url: {
       type: "string",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -518,7 +578,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { list_id, custom_task_ids, ...inputData } =
           input.event.inputConfig;

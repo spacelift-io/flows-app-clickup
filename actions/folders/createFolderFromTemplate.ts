@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -163,10 +163,11 @@ const inputSchema = {
           description: "Include archived tasks (1 or 2 or null)",
         },
       },
+      additionalProperties: true,
     },
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Folder From Template
 const outputSchema = {
@@ -215,6 +216,7 @@ const outputSchema = {
               description: "Whether the user has access to the Space",
             },
           },
+          additionalProperties: true,
         },
         task_count: {
           type: "string",
@@ -251,6 +253,7 @@ const outputSchema = {
                 description: "Type of the status (closed, custom, open)",
               },
             },
+            additionalProperties: true,
           },
         },
         lists: {
@@ -258,6 +261,7 @@ const outputSchema = {
           description: "Lists contained in the Folder",
           items: {
             type: "object",
+            additionalProperties: true,
           },
         },
         permission_level: {
@@ -265,8 +269,10 @@ const outputSchema = {
           description: "Permission level for the current user",
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -276,7 +282,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { space_id, template_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/space/${space_id}/folder_template/${template_id}`;

@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -15,7 +15,7 @@ const inputSchema = {
     type: "boolean",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for List Goals
 const outputSchema = {
@@ -180,6 +180,7 @@ const outputSchema = {
                   type: "boolean",
                 },
               },
+              additionalProperties: true,
             },
           },
           group_members: {
@@ -192,6 +193,7 @@ const outputSchema = {
             type: "integer",
           },
         },
+        additionalProperties: true,
       },
     },
     folders: {
@@ -275,6 +277,7 @@ const outputSchema = {
                   type: "string",
                 },
               },
+              additionalProperties: true,
             },
           },
           goals: {
@@ -432,6 +435,7 @@ const outputSchema = {
                         type: "boolean",
                       },
                     },
+                    additionalProperties: true,
                   },
                 },
                 group_members: {
@@ -444,12 +448,15 @@ const outputSchema = {
                   type: "integer",
                 },
               },
+              additionalProperties: true,
             },
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -459,7 +466,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const endpoint = `/v2/team/${input.app.signals.teamId}/goal`;
 

@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -22,7 +22,14 @@ const inputSchema = {
     name: "List IDs",
     description:
       "Enter an array of List IDs to link this target with one or more Lists.",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description:
+        "Enter an array of List IDs to link this target with one or more Lists.",
+    },
     required: true,
   },
   name: {
@@ -34,26 +41,42 @@ const inputSchema = {
   owners: {
     name: "Owners",
     description: "Array of user IDs who own this item",
-    type: ["number"],
+    type: {
+      type: "array",
+      items: {
+        type: "integer",
+      },
+    },
     required: true,
   },
   steps_end: {
     name: "Steps End",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
   steps_start: {
     name: "Steps Start",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
   task_ids: {
     name: "Task IDs",
     description:
       "Enter an array of task IDs to link this target with one or more tasks.",
-    type: ["string"],
+    type: {
+      description:
+        "Enter an array of task IDs to link this target with one or more tasks.",
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
     required: true,
   },
   type: {
@@ -69,7 +92,7 @@ const inputSchema = {
     type: "string",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Key Result
 const outputSchema = {
@@ -176,6 +199,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
         },
         last_action: {
@@ -237,10 +261,13 @@ const outputSchema = {
               ],
             },
           },
+          additionalProperties: true,
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -250,7 +277,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { goal_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/goal/${goal_id}/key_result`;

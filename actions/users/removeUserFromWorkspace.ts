@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -15,7 +15,7 @@ const inputSchema = {
     type: "number",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Remove User From Workspace
 const outputSchema = {
@@ -52,8 +52,10 @@ const outputSchema = {
           },
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -63,7 +65,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { user_id } = input.event.inputConfig;
         const endpoint = `/v2/team/${input.app.signals.teamId}/user/${user_id}`;

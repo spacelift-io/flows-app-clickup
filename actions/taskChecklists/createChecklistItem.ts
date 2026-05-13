@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -21,7 +21,9 @@ const inputSchema = {
   assignee: {
     name: "Assignee",
     description: "The user ID to assign",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   name: {
@@ -30,7 +32,7 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Checklist Item
 const outputSchema = {
@@ -125,6 +127,7 @@ const outputSchema = {
                     type: "string",
                   },
                 },
+                additionalProperties: true,
               },
               resolved: {
                 type: "boolean",
@@ -149,11 +152,14 @@ const outputSchema = {
                 },
               },
             },
+            additionalProperties: true,
           },
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -163,7 +169,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { checklist_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/checklist/${checklist_id}/checklist_item`;

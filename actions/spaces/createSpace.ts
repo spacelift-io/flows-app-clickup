@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -51,6 +51,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         time_tracking: {
           required: ["enabled"],
@@ -60,6 +61,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         tags: {
           required: ["enabled"],
@@ -69,6 +71,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         time_estimates: {
           required: ["enabled"],
@@ -78,6 +81,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         checklists: {
           required: ["enabled"],
@@ -87,6 +91,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         custom_fields: {
           required: ["enabled"],
@@ -96,6 +101,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         remap_dependencies: {
           required: ["enabled"],
@@ -105,6 +111,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         dependency_warning: {
           required: ["enabled"],
@@ -114,6 +121,7 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         portfolios: {
           required: ["enabled"],
@@ -123,8 +131,10 @@ const inputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -140,7 +150,7 @@ const inputSchema = {
     type: "string",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Space
 const outputSchema = {
@@ -186,6 +196,7 @@ const outputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     multiple_assignees: {
@@ -233,6 +244,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         sprints: {
           required: ["enabled"],
@@ -242,6 +254,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         points: {
           required: ["enabled"],
@@ -251,6 +264,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         custom_items: {
           required: ["enabled"],
@@ -260,6 +274,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         tags: {
           required: ["enabled"],
@@ -269,6 +284,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         time_estimates: {
           required: ["enabled"],
@@ -278,6 +294,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         checklists: {
           required: ["enabled"],
@@ -287,6 +304,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         zoom: {
           required: ["enabled"],
@@ -296,6 +314,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         milestones: {
           required: ["enabled"],
@@ -305,6 +324,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         custom_fields: {
           required: ["enabled"],
@@ -314,6 +334,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         remap_dependencies: {
           required: ["enabled"],
@@ -323,6 +344,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         dependency_warning: {
           required: ["enabled"],
@@ -332,6 +354,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         multiple_assignees: {
           required: ["enabled"],
@@ -341,6 +364,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         portfolios: {
           required: ["enabled"],
@@ -350,6 +374,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         emails: {
           required: ["enabled"],
@@ -359,13 +384,16 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
       },
+      additionalProperties: true,
     },
     archived: {
       type: "boolean",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -375,7 +403,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const inputData = input.event.inputConfig;
         const endpoint = `/v2/team/${input.app.signals.teamId}/space`;

@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -12,7 +12,9 @@ const inputSchema = {
   page: {
     name: "Page",
     description: "Page number for pagination",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
   view_id: {
@@ -21,7 +23,14 @@ const inputSchema = {
     type: "string",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+  custom_task_ids: {
+    name: "Custom Task IDs",
+    description:
+      "If you want to reference a task by its custom task id, this value must be `true`.",
+    type: "boolean",
+    required: false,
+  },
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for List View Tasks
 const outputSchema = {
@@ -66,6 +75,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           markdown_description: {
             type: "string",
@@ -116,6 +126,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           assignees: {
             type: "array",
@@ -169,6 +180,7 @@ const outputSchema = {
             anyOf: [
               {
                 type: "object",
+                additionalProperties: true,
               },
               {
                 type: "null",
@@ -196,11 +208,7 @@ const outputSchema = {
             ],
           },
           points: {
-            anyOf: [
-              {
-                type: "number",
-              },
-            ],
+            type: "number",
           },
           time_estimate: {
             anyOf: [
@@ -240,6 +248,7 @@ const outputSchema = {
                     type: "boolean",
                   },
                 },
+                additionalProperties: true,
               },
               date_created: {
                 type: "string",
@@ -286,6 +295,7 @@ const outputSchema = {
                         ],
                       },
                     },
+                    additionalProperties: true,
                   },
                   {
                     type: "string",
@@ -303,6 +313,7 @@ const outputSchema = {
                 type: "boolean",
               },
             },
+            additionalProperties: true,
           },
           list: {
             required: ["id"],
@@ -312,6 +323,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           folder: {
             required: ["id"],
@@ -321,6 +333,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           space: {
             required: ["id"],
@@ -330,17 +343,20 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           url: {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     last_page: {
       type: "boolean",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -350,7 +366,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { view_id, custom_task_ids } = input.event.inputConfig;
         const params = new URLSearchParams();

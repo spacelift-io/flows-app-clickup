@@ -65,6 +65,7 @@ export function createWebhookSubscriptionBlock(
     name,
     description,
     category: "Event Subscriptions",
+    entrypoint: true,
     outputs: {
       event: {
         name: `${name} Event`,

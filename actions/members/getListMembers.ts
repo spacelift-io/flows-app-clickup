@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -15,7 +15,7 @@ const inputSchema = {
     type: "number",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Get List Members
 const outputSchema = {
@@ -144,11 +144,14 @@ const outputSchema = {
                 ],
               },
             },
+            additionalProperties: true,
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -158,7 +161,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { list_id } = input.event.inputConfig;
         const endpoint = `/v2/list/${list_id}/member`;

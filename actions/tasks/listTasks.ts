@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -25,78 +25,135 @@ const inputSchema = {
   assignees: {
     name: "Assignees",
     description: "Array of user IDs to assign",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description:
+        "Filter by Assignees. For example: \\\n \\\n`?assignees[]=1234&assignees[]=5678`",
+    },
     required: false,
   },
   custom_field: {
     name: "Custom Field",
     description:
       "Include tasks with specific values in only one Custom Field. This Custom Field can be a Custom Relationship.",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description:
+        "Include tasks with specific values in only one Custom Field. This Custom Field can be a Custom Relationship.",
+    },
     required: false,
   },
   custom_fields: {
     name: "Custom Fields",
     description:
       'Include tasks with specific values in one or more Custom Fields. Custom Relationships are included.\\ \\ For example: `?custom_fields=[{"field_id":"abcdefghi12345678","operator":"=","value":"1234"},{"field_id":"jklmnop123456","operator":"<","value":"5"}]`\\ \\ Only set Custom Field values display in the `value` property of the `custom_fields` parameter. If you want to include tasks with specific values in only one Custom Field, use `custom_field` instead.\\ \\ Learn more about [filtering using Custom Fields.](doc:taskfilters)',
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description:
+        'Include tasks with specific values in one or more Custom Fields. Custom Relationships are included.\\\n \\\nFor example: `?custom_fields=[{"field_id":"abcdefghi12345678","operator":"=","value":"1234"},{"field_id":"jklmnop123456","operator":"<","value":"5"}]`\\\n \\\nOnly set Custom Field values display in the `value` property of the `custom_fields` parameter. If you want to include tasks with specific values in only one Custom Field, use `custom_field` instead.\\\n \\\nLearn more about [filtering using Custom Fields.](doc:taskfilters)',
+    },
     required: false,
   },
   custom_items: {
     name: "Custom Items",
     description:
       "Filter by custom task types. For example: \\ \\ `?custom_items[]=0&custom_items[]=1300` \\ \\ Including `0` returns tasks. Including `1` returns Milestones. Including any other number returns the custom task type as defined in your Workspace.",
-    type: ["number"],
+    type: {
+      type: "array",
+      items: {
+        type: "number",
+      },
+      description:
+        "Filter by custom task types. For example: \\\n \\\n`?custom_items[]=0&custom_items[]=1300` \\\n \\\nIncluding `0` returns tasks. Including `1` returns Milestones. Including any other number returns the custom task type as defined in your Workspace.",
+    },
     required: false,
   },
   date_created_gt: {
     name: "Date Created Gt",
     description:
       "Filter by date created greater than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description:
+        "Filter by date created greater than Unix time in milliseconds.",
+    },
     required: false,
   },
   date_created_lt: {
     name: "Date Created Lt",
     description: "Filter by date created less than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description:
+        "Filter by date created less than Unix time in milliseconds.",
+    },
     required: false,
   },
   date_done_gt: {
     name: "Date Done Gt",
     description: "Filter by date done greater than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description:
+        "Filter by date done greater than Unix time in milliseconds.",
+    },
     required: false,
   },
   date_done_lt: {
     name: "Date Done Lt",
     description: "Filter by date done less than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description: "Filter by date done less than Unix time in milliseconds.",
+    },
     required: false,
   },
   date_updated_gt: {
     name: "Date Updated Gt",
     description:
       "Filter by date updated greater than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description:
+        "Filter by date updated greater than Unix time in milliseconds.",
+    },
     required: false,
   },
   date_updated_lt: {
     name: "Date Updated Lt",
     description: "Filter by date updated less than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description:
+        "Filter by date updated less than Unix time in milliseconds.",
+    },
     required: false,
   },
   due_date_gt: {
     name: "Due Date Gt",
     description: "Filter by due date greater than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description: "Filter by due date greater than Unix time in milliseconds.",
+    },
     required: false,
   },
   due_date_lt: {
     name: "Due Date Lt",
     description: "Filter by due date less than Unix time in milliseconds.",
-    type: "number",
+    type: {
+      type: "integer",
+      description: "Filter by due date less than Unix time in milliseconds.",
+    },
     required: false,
   },
   include_closed: {
@@ -123,7 +180,10 @@ const inputSchema = {
   page: {
     name: "Page",
     description: "Page number for pagination",
-    type: "number",
+    type: {
+      type: "integer",
+      description: "Page to fetch (starts at 0).",
+    },
     required: false,
   },
   reverse: {
@@ -136,7 +196,14 @@ const inputSchema = {
     name: "Statuses",
     description:
       "Filter by statuses. To include closed tasks, use the `include_closed` parameter. \\ \\ For example: \\ \\ `?statuses[]=to%20do&statuses[]=in%20progress`",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description:
+        "Filter by statuses. To include closed tasks, use the `include_closed` parameter. \\\n \\\nFor example: \\\n \\\n`?statuses[]=to%20do&statuses[]=in%20progress`",
+    },
     required: false,
   },
   subtasks: {
@@ -148,16 +215,36 @@ const inputSchema = {
   tags: {
     name: "Tags",
     description: "Array of tag names to apply",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description:
+        "Filter by tags. For example: \\\n \\\n`?tags[]=tag1&tags[]=this%20tag`",
+    },
     required: false,
   },
   watchers: {
     name: "Watchers",
     description: "Array of user IDs to watch this item",
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description: "Filter by watchers.",
+    },
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+  custom_task_ids: {
+    name: "Custom Task IDs",
+    description:
+      "If you want to reference a task by its custom task id, this value must be `true`.",
+    type: "boolean",
+    required: false,
+  },
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for List Tasks
 const outputSchema = {
@@ -201,6 +288,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           markdown_description: {
             type: "string",
@@ -251,6 +339,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           assignees: {
             type: "array",
@@ -304,6 +393,7 @@ const outputSchema = {
             anyOf: [
               {
                 type: "object",
+                additionalProperties: true,
               },
               {
                 type: "null",
@@ -331,11 +421,7 @@ const outputSchema = {
             ],
           },
           points: {
-            anyOf: [
-              {
-                type: "number",
-              },
-            ],
+            type: "number",
           },
           time_estimate: {
             anyOf: [
@@ -375,6 +461,7 @@ const outputSchema = {
                     type: "boolean",
                   },
                 },
+                additionalProperties: true,
               },
               date_created: {
                 type: "string",
@@ -421,6 +508,7 @@ const outputSchema = {
                         ],
                       },
                     },
+                    additionalProperties: true,
                   },
                   {
                     type: "string",
@@ -438,6 +526,7 @@ const outputSchema = {
                 type: "boolean",
               },
             },
+            additionalProperties: true,
           },
           list: {
             required: ["id"],
@@ -447,6 +536,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           folder: {
             required: ["id"],
@@ -456,6 +546,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           space: {
             required: ["id"],
@@ -465,17 +556,20 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           url: {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     last_page: {
       type: "boolean",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -485,7 +579,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { list_id, custom_task_ids } = input.event.inputConfig;
         const params = new URLSearchParams();

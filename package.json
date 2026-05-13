@@ -9,14 +9,14 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^14.0.2",
-    "@slflows/sdk": "^0.2.0",
+    "@slflows/sdk": "^0.13.0",
     "@types/node": "^24.0.7",
     "typescript": "^5.0.0"
   },
   "devDependencies": {
+    "@useflows/flowctl": "^0.1.1",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
-    "@useflows/flowctl": "^0.1.1",
     "tsx": "^4.20.3"
   }
 }

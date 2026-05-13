@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -15,7 +15,7 @@ const inputSchema = {
     type: "number",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for List Tags
 const outputSchema = {
@@ -38,9 +38,11 @@ const outputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -50,7 +52,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { space_id } = input.event.inputConfig;
         const endpoint = `/v2/space/${space_id}/tag`;

@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -31,12 +31,13 @@ const inputSchema = {
     type: "boolean",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Add Tag To Task
 const outputSchema = {
   type: "object",
   contentMediaType: "application/json",
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -46,7 +47,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { task_id, tag_name, custom_task_ids, ...inputData } =
           input.event.inputConfig;

@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -19,7 +19,14 @@ const inputSchema = {
     name: "Custom Fields",
     description:
       'Include tasks with specific values in one or more Custom Fields. Custom Relationships are included.\\ \\ For example: `?custom_fields=[{"field_id":"abcdefghi12345678","operator":"=","value":"1234"},{"field_id":"jklmnop123456","operator":"<","value":"5"}]`\\ \\ Only set Custom Field values display in the `value` property of the `custom_fields` parameter. If you want to include tasks with specific values in only one Custom Field, use `custom_field` instead.\\ \\ Learn more about [filtering using Custom Fields.](doc:filtertasks)',
-    type: ["string"],
+    type: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+      description:
+        'Include tasks with specific values in one or more Custom Fields. Custom Relationships are included.\\\n \\\nFor example: `?custom_fields=[{"field_id":"abcdefghi12345678","operator":"=","value":"1234"},{"field_id":"jklmnop123456","operator":"<","value":"5"}]`\\\n \\\nOnly set Custom Field values display in the `value` property of the `custom_fields` parameter. If you want to include tasks with specific values in only one Custom Field, use `custom_field` instead.\\\n \\\nLearn more about [filtering using Custom Fields.](doc:filtertasks)',
+    },
     required: false,
   },
   include_markdown_description: {
@@ -35,7 +42,14 @@ const inputSchema = {
     type: "boolean",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+  custom_task_ids: {
+    name: "Custom Task IDs",
+    description:
+      "If you want to reference a task by its custom task id, this value must be `true`.",
+    type: "boolean",
+    required: false,
+  },
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Get Task
 const outputSchema = {
@@ -92,6 +106,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     orderindex: {
       type: "string",
@@ -129,6 +144,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     assignees: {
       type: "array",
@@ -182,6 +198,7 @@ const outputSchema = {
       anyOf: [
         {
           type: "object",
+          additionalProperties: true,
         },
         {
           type: "null",
@@ -209,11 +226,7 @@ const outputSchema = {
       ],
     },
     points: {
-      anyOf: [
-        {
-          type: "number",
-        },
-      ],
+      type: "number",
     },
     time_estimate: {
       anyOf: [
@@ -265,6 +278,7 @@ const outputSchema = {
                 type: "boolean",
               },
             },
+            additionalProperties: true,
           },
           date_created: {
             type: "string",
@@ -311,6 +325,7 @@ const outputSchema = {
                     ],
                   },
                 },
+                additionalProperties: true,
               },
               {
                 type: "string",
@@ -328,6 +343,7 @@ const outputSchema = {
             type: "boolean",
           },
         },
+        additionalProperties: true,
       },
     },
     list: {
@@ -338,6 +354,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     folder: {
       required: ["id"],
@@ -347,6 +364,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     space: {
       required: ["id"],
@@ -356,6 +374,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     url: {
       type: "string",
@@ -372,16 +391,16 @@ const outputSchema = {
             type: "string",
           },
           date: {
-            type: "bigint",
+            type: "number",
           },
           type: {
-            type: "int",
+            type: "integer",
           },
           source: {
-            type: "int",
+            type: "integer",
           },
           version: {
-            type: "int",
+            type: "integer",
           },
           extension: {
             type: "string",
@@ -408,13 +427,13 @@ const outputSchema = {
             type: "string",
           },
           size: {
-            type: "bigint",
+            type: "number",
           },
           total_comments: {
-            type: "int",
+            type: "integer",
           },
           resolved_comments: {
-            type: "int",
+            type: "integer",
           },
           user: {
             required: [
@@ -446,6 +465,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           deleted: {
             type: "boolean",
@@ -458,6 +478,7 @@ const outputSchema = {
           },
           email_data: {
             type: "object",
+            additionalProperties: true,
           },
           url_w_query: {
             type: "string",
@@ -466,9 +487,11 @@ const outputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -478,7 +501,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { task_id, custom_task_ids } = input.event.inputConfig;
         const params = new URLSearchParams();

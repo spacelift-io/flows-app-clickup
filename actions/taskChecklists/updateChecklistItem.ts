@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -27,7 +27,16 @@ const inputSchema = {
   assignee: {
     name: "Assignee",
     description: "The user ID to assign",
-    type: "string",
+    type: {
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
     required: false,
   },
   name: {
@@ -39,7 +48,18 @@ const inputSchema = {
   parent: {
     name: "Parent",
     description: "Parent task ID for creating subtasks",
-    type: "string",
+    type: {
+      description:
+        "To nest a checklist item under another checklist item, include the other item's `checklist_item_id`.",
+      anyOf: [
+        {
+          type: "string",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
     required: false,
   },
   resolved: {
@@ -48,7 +68,7 @@ const inputSchema = {
     type: "boolean",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Checklist Item
 const outputSchema = {
@@ -146,11 +166,14 @@ const outputSchema = {
                 },
               },
             },
+            additionalProperties: true,
           },
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -160,7 +183,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { checklist_id, checklist_item_id, ...inputData } =
           input.event.inputConfig;

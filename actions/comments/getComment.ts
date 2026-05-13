@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -15,7 +15,14 @@ const inputSchema = {
     type: "number",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+  custom_task_ids: {
+    name: "Custom Task IDs",
+    description:
+      "If you want to reference a task by its custom task id, this value must be `true`.",
+    type: "boolean",
+    required: false,
+  },
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Get Comment
 const outputSchema = {
@@ -51,6 +58,7 @@ const outputSchema = {
                   type: "string",
                 },
               },
+              additionalProperties: true,
             },
           },
           comment_text: {
@@ -86,6 +94,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           resolved: {
             type: "boolean",
@@ -120,6 +129,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           assigned_by: {
             required: [
@@ -151,6 +161,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           reactions: {
             type: "array",
@@ -166,9 +177,11 @@ const outputSchema = {
             description: "For threaded comments, `reply_count` is always 0.",
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -178,7 +191,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { comment_id, custom_task_ids } = input.event.inputConfig;
         const params = new URLSearchParams();

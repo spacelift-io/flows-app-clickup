@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -27,7 +27,10 @@ const inputSchema = {
   assignee: {
     name: "Assignee",
     description: "The user ID to assign",
-    type: "number",
+    type: {
+      description: "Include a `user_id` to assign this List.",
+      type: "integer",
+    },
     required: false,
   },
   content: {
@@ -39,7 +42,9 @@ const inputSchema = {
   due_date: {
     name: "Due Date",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   due_date_time: {
@@ -58,7 +63,9 @@ const inputSchema = {
   priority: {
     name: "Priority",
     description: "The priority level",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   status: {
@@ -67,7 +74,7 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create List
 const outputSchema = {
@@ -99,6 +106,7 @@ const outputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     priority: {
       required: ["priority", "color"],
@@ -111,6 +119,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     assignee: {
       required: ["id", "color", "username", "initials", "profilePicture"],
@@ -132,6 +141,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     task_count: {
       anyOf: [
@@ -186,6 +196,7 @@ const outputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     space: {
       required: ["id", "name", "access"],
@@ -201,6 +212,7 @@ const outputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     statuses: {
       type: "array",
@@ -221,12 +233,14 @@ const outputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     inbound_address: {
       type: "string",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -236,7 +250,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { folder_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/folder/${folder_id}/list`;

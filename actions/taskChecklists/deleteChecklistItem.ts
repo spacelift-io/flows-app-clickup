@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -21,12 +21,13 @@ const inputSchema = {
     type: "string",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Delete Checklist Item
 const outputSchema = {
   type: "object",
   contentMediaType: "application/json",
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -36,7 +37,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { checklist_id, checklist_item_id } = input.event.inputConfig;
         const endpoint = `/v2/checklist/${checklist_id}/checklist_item/${checklist_item_id}`;
