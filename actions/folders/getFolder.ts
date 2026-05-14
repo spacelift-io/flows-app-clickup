@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -15,7 +15,7 @@ const inputSchema = {
     type: "number",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Get Folder
 const outputSchema = {
@@ -60,6 +60,7 @@ const outputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     task_count: {
       type: "string",
@@ -71,6 +72,7 @@ const outputSchema = {
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -80,7 +82,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { folder_id } = input.event.inputConfig;
         const endpoint = `/v2/folder/${folder_id}`;

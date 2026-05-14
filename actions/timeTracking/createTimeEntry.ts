@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -16,19 +16,29 @@ const inputSchema = {
     name: "Duration",
     description:
       "When there are values for both start and end, duration is ignored",
-    type: "number",
+    type: {
+      description:
+        "When there are values for both `start` and `end`, `duration` is ignored. The `stop` parameter can be used instead of the `duration` parameter.",
+      type: "integer",
+    },
     required: true,
   },
   start: {
     name: "Start",
     description: "The start time in Unix timestamp format",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
   assignee: {
     name: "Assignee",
     description: "The user ID to assign",
-    type: "number",
+    type: {
+      description:
+        "Workspace owners and admins can include any user id. Workspace members can only include their own user id.",
+      type: "integer",
+    },
     required: false,
   },
   billable: {
@@ -53,13 +63,19 @@ const inputSchema = {
   end: {
     name: "End",
     description: "The end time in Unix timestamp format",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   stop: {
     name: "Stop",
     description: "The stop time parameter, can be used instead of duration",
-    type: "number",
+    type: {
+      type: "integer",
+      description:
+        "The `duration` parameter can be used instead of the `stop` parameter. ",
+    },
     required: false,
   },
   tags: {
@@ -83,6 +99,7 @@ const inputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     required: false,
@@ -93,7 +110,7 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Time Entry
 const outputSchema = {
@@ -127,6 +144,7 @@ const outputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     start: {
@@ -145,6 +163,7 @@ const outputSchema = {
       type: "string",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -154,7 +173,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { team_Id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/team/${team_Id}/time_entries`;

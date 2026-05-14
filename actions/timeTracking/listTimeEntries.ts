@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -96,7 +96,7 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for List Time Entries
 const outputSchema = {
@@ -158,6 +158,7 @@ const outputSchema = {
                     type: "string",
                   },
                 },
+                additionalProperties: true,
               },
               custom_type: {
                 anyOf: [
@@ -170,6 +171,7 @@ const outputSchema = {
                 ],
               },
             },
+            additionalProperties: true,
           },
           wid: {
             type: "string",
@@ -204,6 +206,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           billable: {
             type: "boolean",
@@ -264,6 +267,7 @@ const outputSchema = {
                     description: "Timestamp for the start of the week",
                   },
                 },
+                additionalProperties: true,
               },
               user: {
                 required: [
@@ -302,6 +306,7 @@ const outputSchema = {
                     ],
                   },
                 },
+                additionalProperties: true,
               },
               approvers: {
                 type: "array",
@@ -313,6 +318,7 @@ const outputSchema = {
                       description: "ID of the user who can approve the request",
                     },
                   },
+                  additionalProperties: true,
                 },
               },
               approver_id: {
@@ -385,11 +391,14 @@ const outputSchema = {
                           ],
                         },
                       },
+                      additionalProperties: true,
                     },
                   },
+                  additionalProperties: true,
                 },
               },
             },
+            additionalProperties: true,
           },
           task_location: {
             required: [
@@ -421,6 +430,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           task_tags: {
             type: "array",
@@ -441,15 +451,18 @@ const outputSchema = {
                   type: "integer",
                 },
               },
+              additionalProperties: true,
             },
           },
           task_url: {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -459,7 +472,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { team_Id } = input.event.inputConfig;
         const endpoint = `/v2/team/${team_Id}/time_entries`;

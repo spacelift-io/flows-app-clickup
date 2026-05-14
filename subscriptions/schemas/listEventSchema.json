@@ -24,7 +24,7 @@
             "additionalProperties": true
           },
           "source": {
-            "type": ["string", "null"],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "description": "Change source"
           },
           "user": {
@@ -37,7 +37,7 @@
               "color": { "type": "string", "description": "User color" },
               "initials": { "type": "string", "description": "User initials" },
               "profilePicture": {
-                "type": ["string", "null"],
+                "anyOf": [{ "type": "string" }, { "type": "null" }],
                 "description": "Profile picture URL"
               }
             },

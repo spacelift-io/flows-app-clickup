@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -28,15 +28,20 @@ const inputSchema = {
     name: "Position",
     description:
       'Position refers to the order of appearance of checklists on a task.\\ \\ To set a checklist to appear at the top of the checklists section of a task, use `"position": 0`.',
-    type: "number",
+    type: {
+      description:
+        'Position refers to the order of appearance of checklists on a task.\\\n \\\nTo set a checklist to appear at the top of the checklists section of a task, use `"position": 0`.',
+      type: "integer",
+    },
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Checklist
 const outputSchema = {
   type: "object",
   contentMediaType: "application/json",
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -46,7 +51,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { checklist_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/checklist/${checklist_id}`;

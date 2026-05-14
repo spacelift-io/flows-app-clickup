@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -27,10 +27,12 @@ const inputSchema = {
   steps_current: {
     name: "Steps Current",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Key Result
 const outputSchema = {
@@ -137,6 +139,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
         },
         last_action: {
@@ -217,10 +220,13 @@ const outputSchema = {
               ],
             },
           },
+          additionalProperties: true,
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -230,7 +236,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { key_result_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/key_result/${key_result_id}`;

@@ -99,7 +99,7 @@ To connect your ClickUp account:
         return handleAuthCreation(input);
 
       case InstallState.AWAITING_USER_AUTH:
-        return {};
+        return { newStatus: "in_progress" };
 
       case InstallState.NEEDS_WEBHOOK_SETUP:
         return handleWebhookSetup(input, data.accessToken, {

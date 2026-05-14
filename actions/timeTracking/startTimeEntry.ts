@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -46,6 +46,7 @@ const inputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     required: false,
@@ -56,7 +57,7 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Start Time Entry
 const outputSchema = {
@@ -108,6 +109,7 @@ const outputSchema = {
                   type: "string",
                 },
               },
+              additionalProperties: true,
             },
             custom_type: {
               anyOf: [
@@ -120,6 +122,7 @@ const outputSchema = {
               ],
             },
           },
+          additionalProperties: true,
         },
         wid: {
           type: "string",
@@ -154,6 +157,7 @@ const outputSchema = {
               type: "string",
             },
           },
+          additionalProperties: true,
         },
         billable: {
           type: "boolean",
@@ -177,8 +181,10 @@ const outputSchema = {
           type: "integer",
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -188,7 +194,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { team_Id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/team/${team_Id}/time_entries/start`;

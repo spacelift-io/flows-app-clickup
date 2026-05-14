@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -16,7 +16,7 @@ const inputSchema = {
     type: "number",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Get List
 const outputSchema = {
@@ -68,6 +68,7 @@ const outputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     priority: {
       required: ["priority", "color"],
@@ -80,6 +81,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     assignee: {
       anyOf: [
@@ -134,6 +136,7 @@ const outputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     space: {
       required: ["id", "name", "access"],
@@ -149,6 +152,7 @@ const outputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     inbound_address: {
       type: "string",
@@ -178,12 +182,14 @@ const outputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     permission_level: {
       type: "string",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -193,7 +199,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { list_id } = input.event.inputConfig;
         const endpoint = `/v2/list/${list_id}`;

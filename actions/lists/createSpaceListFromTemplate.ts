@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -163,10 +163,11 @@ const inputSchema = {
           description: "Include archived tasks",
         },
       },
+      additionalProperties: true,
     },
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Space List From Template
 const outputSchema = {
@@ -245,6 +246,7 @@ const outputSchema = {
                 "Indicates if the current user has access to this Folder",
             },
           },
+          additionalProperties: true,
         },
         space: {
           type: "object",
@@ -265,6 +267,7 @@ const outputSchema = {
                 "Indicates if the current user has access to this Space",
             },
           },
+          additionalProperties: true,
         },
         inbound_address: {
           type: "string",
@@ -313,6 +316,7 @@ const outputSchema = {
                 description: "TODO - Identifier for grouping related statuses",
               },
             },
+            additionalProperties: true,
           },
         },
         permission_level: {
@@ -321,8 +325,10 @@ const outputSchema = {
             "Access level the current user has for this List (e.g., create, edit, view)",
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -332,7 +338,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { space_id, template_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/space/${space_id}/list_template/${template_id}`;

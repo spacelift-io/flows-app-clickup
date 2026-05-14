@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -27,7 +27,9 @@ const inputSchema = {
   due_date: {
     name: "Due Date",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
   multiple_owners: {
@@ -45,10 +47,16 @@ const inputSchema = {
   owners: {
     name: "Owners",
     description: "Array of user IDs who own this item",
-    type: ["number"],
+    type: {
+      type: "array",
+      items: {
+        type: "integer",
+      },
+      description: "Array of user IDs.",
+    },
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Goal
 const outputSchema = {
@@ -174,6 +182,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
         },
         key_results: {
@@ -195,8 +204,10 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -206,7 +217,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const inputData = input.event.inputConfig;
         const endpoint = `/v2/team/${input.app.signals.teamId}/goal`;

@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -34,7 +34,9 @@ const inputSchema = {
   assignee: {
     name: "Assignee",
     description: "The user ID to assign",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   custom_task_ids: {
@@ -50,7 +52,7 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Comment
 const outputSchema = {
@@ -67,6 +69,7 @@ const outputSchema = {
       type: "integer",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -76,7 +79,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { task_id, custom_task_ids, ...inputData } =
           input.event.inputConfig;

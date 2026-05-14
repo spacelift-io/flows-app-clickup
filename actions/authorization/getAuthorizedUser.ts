@@ -2,13 +2,13 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
 
 // Input schema for Get Authorized User
-const inputSchema = {} as Record<string, AppBlockConfigField>;
+const inputSchema = {} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Get Authorized User
 const outputSchema = {
@@ -47,8 +47,10 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -58,7 +60,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const endpoint = `/v2/user`;
 

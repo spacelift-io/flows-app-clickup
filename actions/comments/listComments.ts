@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -25,7 +25,11 @@ const inputSchema = {
   start: {
     name: "Start",
     description: "The start time in Unix timestamp format",
-    type: "number",
+    type: {
+      type: "integer",
+      description:
+        "Enter the `date` of a task comment using Unix time in milliseconds.",
+    },
     required: false,
   },
   start_id: {
@@ -34,7 +38,7 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for List Comments
 const outputSchema = {
@@ -70,6 +74,7 @@ const outputSchema = {
                   type: "string",
                 },
               },
+              additionalProperties: true,
             },
           },
           comment_text: {
@@ -105,6 +110,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           resolved: {
             type: "boolean",
@@ -139,6 +145,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           assigned_by: {
             required: [
@@ -170,6 +177,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
           reactions: {
             type: "array",
@@ -185,9 +193,11 @@ const outputSchema = {
             description: "For threaded comments, `reply_count` is always 0.",
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -197,7 +207,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { task_id, custom_task_ids } = input.event.inputConfig;
         const params = new URLSearchParams();

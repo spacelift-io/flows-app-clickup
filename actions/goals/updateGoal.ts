@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -15,7 +15,13 @@ const inputSchema = {
   add_owners: {
     name: "Add Owners",
     description: "Array of user IDs.",
-    type: ["number"],
+    type: {
+      type: "array",
+      items: {
+        type: "integer",
+      },
+      description: "Array of user IDs.",
+    },
     required: true,
   },
   color: {
@@ -33,7 +39,9 @@ const inputSchema = {
   due_date: {
     name: "Due Date",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: true,
   },
   goal_id: {
@@ -51,10 +59,16 @@ const inputSchema = {
   rem_owners: {
     name: "Rem Owners",
     description: "Array of user IDs.",
-    type: ["number"],
+    type: {
+      type: "array",
+      items: {
+        type: "integer",
+      },
+      description: "Array of user IDs.",
+    },
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Goal
 const outputSchema = {
@@ -180,6 +194,7 @@ const outputSchema = {
                 type: "string",
               },
             },
+            additionalProperties: true,
           },
         },
         key_results: {
@@ -201,8 +216,10 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -212,7 +229,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { goal_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/goal/${goal_id}`;

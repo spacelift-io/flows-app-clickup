@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -33,6 +33,7 @@ const inputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
     required: true,
@@ -72,19 +73,27 @@ const inputSchema = {
     name: "Duration",
     description:
       "When there are values for both start and end, duration is ignored",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   end: {
     name: "End",
     description: "The end time in Unix timestamp format",
-    type: "number",
+    type: {
+      type: "integer",
+      description: "When providing `end`, you must also provide `start`.",
+    },
     required: false,
   },
   start: {
     name: "Start",
     description: "The start time in Unix timestamp format",
-    type: "number",
+    type: {
+      type: "integer",
+      description: "When providing `start`, you must also provide `end`.",
+    },
     required: false,
   },
   tag_action: {
@@ -93,12 +102,13 @@ const inputSchema = {
     type: "string",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Time Entry
 const outputSchema = {
   type: "object",
   contentMediaType: "application/json",
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -108,7 +118,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { timer_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/team/${input.app.signals.teamId}/time_entries/${timer_id}`;

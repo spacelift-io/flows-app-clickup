@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import { makeClickUpApiRequest } from "../../utils/apiHelpers.ts";
@@ -21,7 +21,7 @@ const inputSchema = {
     type: "boolean",
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for List Lists
 const outputSchema = {
@@ -77,6 +77,7 @@ const outputSchema = {
                     type: "boolean",
                   },
                 },
+                additionalProperties: true,
               },
               {
                 anyOf: [
@@ -103,6 +104,7 @@ const outputSchema = {
                     type: "string",
                   },
                 },
+                additionalProperties: true,
               },
               {
                 anyOf: [
@@ -174,6 +176,7 @@ const outputSchema = {
                 type: "boolean",
               },
             },
+            additionalProperties: true,
           },
           space: {
             required: ["id", "name", "access"],
@@ -189,6 +192,7 @@ const outputSchema = {
                 type: "boolean",
               },
             },
+            additionalProperties: true,
           },
           archived: {
             type: "boolean",
@@ -200,9 +204,11 @@ const outputSchema = {
             type: "string",
           },
         },
+        additionalProperties: true,
       },
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -212,7 +218,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { folder_id } = input.event.inputConfig;
         const endpoint = `/v2/folder/${folder_id}/list`;

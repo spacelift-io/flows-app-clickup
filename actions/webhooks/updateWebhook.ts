@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -36,7 +36,7 @@ const inputSchema = {
     type: "string",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Webhook
 const outputSchema = {
@@ -135,13 +135,16 @@ const outputSchema = {
               type: "integer",
             },
           },
+          additionalProperties: true,
         },
         secret: {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -151,7 +154,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { webhook_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/webhook/${webhook_id}`;

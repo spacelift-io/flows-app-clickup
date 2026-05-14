@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -31,6 +31,7 @@ const inputSchema = {
           },
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -42,27 +43,16 @@ const inputSchema = {
       type: "object",
       properties: {
         field: {
-          anyOf: [
-            {
-              type: "null",
-            },
-          ],
+          type: "null",
         },
         dir: {
-          anyOf: [
-            {
-              type: "null",
-            },
-          ],
+          type: "null",
         },
         collapsed: {
-          anyOf: [
-            {
-              type: "boolean",
-            },
-          ],
+          type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -93,6 +83,7 @@ const inputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -123,6 +114,7 @@ const inputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -190,6 +182,7 @@ const inputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -209,6 +202,7 @@ const inputSchema = {
             "Include an array of fields to sort by.\\\n \\\n You can sort by the same fields available when [filtering a view](doc:filter-views).",
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -232,6 +226,7 @@ const inputSchema = {
           type: "boolean",
         },
       },
+      additionalProperties: true,
     },
     required: true,
   },
@@ -242,7 +237,7 @@ const inputSchema = {
     type: "string",
     required: true,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Create Team View
 const outputSchema = {
@@ -291,6 +286,7 @@ const outputSchema = {
                 "The level of the Hierarchy where the view is created. \\\n \\\nOptions include: \\\n \\\nWorkspace (Everything Level): `7` \\\n \\\nSpace: `4` \\\n \\\nFolder: `5` \\\n \\\nList: `6`",
             },
           },
+          additionalProperties: true,
         },
         grouping: {
           required: ["field", "dir", "collapsed", "ignore"],
@@ -316,33 +312,23 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         divide: {
           required: ["collapsed"],
           type: "object",
           properties: {
             field: {
-              anyOf: [
-                {
-                  type: "null",
-                },
-              ],
+              type: "null",
             },
             dir: {
-              anyOf: [
-                {
-                  type: "null",
-                },
-              ],
+              type: "null",
             },
             collapsed: {
-              anyOf: [
-                {
-                  type: "boolean",
-                },
-              ],
+              type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         sorting: {
           required: ["fields"],
@@ -357,6 +343,7 @@ const outputSchema = {
                 "Include an array of fields to sort by.\\\n \\\n You can sort by the same fields available when [filtering a view](doc:filter-views).",
             },
           },
+          additionalProperties: true,
         },
         filters: {
           required: ["op", "fields", "search", "show_closed"],
@@ -382,6 +369,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         columns: {
           description:
@@ -398,6 +386,7 @@ const outputSchema = {
               },
             },
           },
+          additionalProperties: true,
         },
         team_sidebar: {
           required: ["assignees", "assigned_comments", "unassigned_tasks"],
@@ -416,6 +405,7 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
         settings: {
           required: [
@@ -472,10 +462,13 @@ const outputSchema = {
               type: "boolean",
             },
           },
+          additionalProperties: true,
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -485,7 +478,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const inputData = input.event.inputConfig;
         const endpoint = `/v2/team/${input.app.signals.teamId}/view`;

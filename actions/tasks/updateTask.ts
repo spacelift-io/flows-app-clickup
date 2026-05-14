@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -27,14 +27,43 @@ const inputSchema = {
   assignees: {
     name: "Assignees",
     description: "Array of user IDs to assign",
-    type: ["number"],
+    type: {
+      required: ["add", "rem"],
+      type: "object",
+      properties: {
+        add: {
+          type: "array",
+          items: {
+            type: "integer",
+          },
+        },
+        rem: {
+          type: "array",
+          items: {
+            type: "integer",
+          },
+        },
+      },
+      additionalProperties: true,
+    },
     required: false,
   },
   custom_item_id: {
     name: "Custom Item ID",
     description:
       'The custom task type ID for this task. A value of `null` (default) sets the task type to type "Task".\\ \\ To get a list of available custom task type IDs for your Workspace, use the [Get Custom Task Types endpoint](ref:getcustomitems).',
-    type: "number",
+    type: {
+      description:
+        'The custom task type ID for this task. A value of `null` (default) sets the task type to type "Task".\\\n \\\nTo get a list of available custom task type IDs for your Workspace, use the [Get Custom Task Types endpoint](ref:getcustomitems).',
+      anyOf: [
+        {
+          type: "number",
+        },
+        {
+          type: "null",
+        },
+      ],
+    },
     required: false,
   },
   custom_task_ids: {
@@ -53,7 +82,9 @@ const inputSchema = {
   due_date: {
     name: "Due Date",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   due_date_time: {
@@ -65,7 +96,24 @@ const inputSchema = {
   group_assignees: {
     name: "Group Assignees",
     description: "",
-    type: ["number"],
+    type: {
+      type: "object",
+      properties: {
+        add: {
+          type: "array",
+          items: {
+            type: "integer",
+          },
+        },
+        rem: {
+          type: "array",
+          items: {
+            type: "integer",
+          },
+        },
+      },
+      additionalProperties: true,
+    },
     required: false,
   },
   markdown_content: {
@@ -96,13 +144,17 @@ const inputSchema = {
   priority: {
     name: "Priority",
     description: "The priority level",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   start_date: {
     name: "Start Date",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   start_date_time: {
@@ -120,16 +172,36 @@ const inputSchema = {
   time_estimate: {
     name: "Time Estimate",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
   watchers: {
     name: "Watchers",
     description: "Array of user IDs to watch this item",
-    type: ["number"],
+    type: {
+      required: ["add", "rem"],
+      type: "object",
+      properties: {
+        add: {
+          type: "array",
+          items: {
+            type: "integer",
+          },
+        },
+        rem: {
+          type: "array",
+          items: {
+            type: "integer",
+          },
+        },
+      },
+      additionalProperties: true,
+    },
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Update Task
 const outputSchema = {
@@ -184,6 +256,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     archived: {
       type: "boolean",
@@ -224,6 +297,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     assignees: {
       type: "array",
@@ -270,6 +344,7 @@ const outputSchema = {
       anyOf: [
         {
           type: "object",
+          additionalProperties: true,
         },
         {
           type: "null",
@@ -297,11 +372,7 @@ const outputSchema = {
       ],
     },
     points: {
-      anyOf: [
-        {
-          type: "number",
-        },
-      ],
+      type: "number",
     },
     time_estimate: {
       anyOf: [
@@ -362,6 +433,7 @@ const outputSchema = {
                 type: "boolean",
               },
             },
+            additionalProperties: true,
           },
           date_created: {
             type: "string",
@@ -376,6 +448,7 @@ const outputSchema = {
             type: "boolean",
           },
         },
+        additionalProperties: true,
       },
     },
     list: {
@@ -386,6 +459,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     folder: {
       required: ["id"],
@@ -395,6 +469,7 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     space: {
       required: ["id"],
@@ -404,11 +479,13 @@ const outputSchema = {
           type: "string",
         },
       },
+      additionalProperties: true,
     },
     url: {
       type: "string",
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -418,7 +495,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { task_id, custom_task_ids, ...inputData } =
           input.event.inputConfig;

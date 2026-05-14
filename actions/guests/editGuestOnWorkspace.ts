@@ -2,7 +2,7 @@ import {
   AppBlock,
   events,
   EventInput,
-  AppBlockConfigField,
+  AppBlockInputConfigField,
   Type,
 } from "@slflows/sdk/v1";
 import {
@@ -51,10 +51,12 @@ const inputSchema = {
   custom_role_id: {
     name: "Custom Role ID",
     description: "",
-    type: "number",
+    type: {
+      type: "integer",
+    },
     required: false,
   },
-} as Record<string, AppBlockConfigField>;
+} as Record<string, AppBlockInputConfigField>;
 
 // Output schema for Edit Guest On Workspace
 const outputSchema = {
@@ -133,6 +135,7 @@ const outputSchema = {
                   type: "string",
                 },
               },
+              additionalProperties: true,
             },
             last_active: {
               anyOf: [
@@ -158,6 +161,7 @@ const outputSchema = {
               type: "string",
             },
           },
+          additionalProperties: true,
         },
         invited_by: {
           type: "object",
@@ -181,6 +185,7 @@ const outputSchema = {
               type: "string",
             },
           },
+          additionalProperties: true,
         },
         can_see_time_spent: {
           type: "boolean",
@@ -219,10 +224,13 @@ const outputSchema = {
               },
             },
           },
+          additionalProperties: true,
         },
       },
+      additionalProperties: true,
     },
   },
+  additionalProperties: true,
 } as Type;
 
 export default {
@@ -232,7 +240,7 @@ export default {
 
   inputs: {
     default: {
-      config: inputSchema as Record<string, AppBlockConfigField>,
+      config: inputSchema,
       onEvent: async (input: EventInput) => {
         const { guest_id, ...inputData } = input.event.inputConfig;
         const endpoint = `/v2/team/${input.app.signals.teamId}/guest/${guest_id}`;
