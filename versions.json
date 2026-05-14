@@ -1,6 +1,11 @@
 {
   "versions": [
     {
+      "version": "0.4.0",
+      "artifactUrl": "https://github.com/spacelift-io/flows-app-clickup/releases/download/v0.4.0/bundle.tar.gz",
+      "artifactChecksum": "sha256:641d30599809d183a9139f29065ad744c45f7ed4e1ddc05558f3db5373326296"
+    },
+    {
       "version": "0.3.2",
       "artifactUrl": "https://github.com/spacelift-io/flows-app-clickup/releases/download/v0.3.2/bundle.tar.gz",
       "artifactChecksum": "sha256:99249ba99f3399e7479f938a76aa5384f514a3f3b093eb9826264aecb0398bbe"
